@@ -18,7 +18,10 @@
         lastModifiedDate = self.lastModifiedDate or self.lastModified or "19700101";
         # Generate a user-friendly version number.
         version = builtins.substring 0 8 lastModifiedDate;
-        pkgs = import nixpkgs {inherit system;};
+        pkgs = import nixpkgs {
+          inherit system;
+          config.allowUnfree = true;
+        };
       in {
         packages.default = pkgs.llvmPackages_latest.stdenv.mkDerivation {
           name = "mlir-${version}";
@@ -82,6 +85,14 @@
             llvmPackages_latest.llvm
             llvmPackages_latest.clang
             llvmPackages_latest.bintools
+
+            # For benchmarking
+            pkg-config
+            gcc
+            llvmPackages_latest.openmp
+            blis
+            openblas
+            mkl
           ];
 
           buildInputs = with pkgs; [
